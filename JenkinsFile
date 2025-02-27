@@ -45,7 +45,7 @@ pipeline
                script {
                      powershell '''
                      $sourcePath = ".\\publish"
-                     $destinationPath = "D:\\deploy_folder"  # Change this as needed
+                     $destinationPath = "D:\\Jenkins_automation"  # Change this as needed
 
                      Copy-Item -Path "$sourcePath\\*" -Destination "$destinationPath" -Recurse -Force
                      '''
