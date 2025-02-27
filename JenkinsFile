@@ -1,5 +1,4 @@
-pipeline 
-{
+pipeline {
    agent any 
 
    environment {
@@ -9,49 +8,51 @@ pipeline
       LOCAL_PUBLISH_PATH = ".\\publish"
    }
 
-  
-
-   stages{
+   stages {
       stage('Checkout') {
          steps {
             checkout scm
          }
       }
 
-      stage('Build')
-      {
+      stage('Build') {
          steps {
-             script {
+            script {
                bat "dotnet restore" 
-
                bat "dotnet build --configuration Release"
-             }
-         }
-      }
-
-      stage('Test'){
-         steps {
-            script {
-                bat "dotnet test  --no-restore --configuration Release"
             }
          }
       }
 
-      stage('Publish'){
+      stage('Test') {
          steps {
             script {
-                bat "dotnet publish --no-restore --configuration Release --output .\\publish"
+               bat "dotnet test --no-restore --configuration Release"
             }
          }
       }
-      
 
-     stage('Deploy') {
+      stage('Publish') {
+         steps {
+            script {
+               bat "dotnet publish --no-restore --configuration Release --output ${env.LOCAL_PUBLISH_PATH}"
+            }
+         }
+      }
+
+      stage('Deploy') {
          steps {
             script {
                powershell '''
-               $sourcePath = ".\\publish"
+               $sourcePath = "${env.LOCAL_PUBLISH_PATH}"
                $destinationPath = "\\\\${env.REMOTE_SERVER}\\D$\\iis\\samplesit"  # Ensure share permissions
+
+               if (!(Test-Path $sourcePath)) {
+                   throw "Source path not found: $sourcePath"
+               }
+               if (!(Test-Path $destinationPath)) {
+                   throw "Destination path not found: $destinationPath"
+               }
 
                Copy-Item -Path "$sourcePath\\*" -Destination "$destinationPath" -Recurse -Force
                '''
@@ -70,18 +71,14 @@ pipeline
             }
          }
       }
-}
-
-
-
- 
+   }
 
    post {
       success {
-         echo  'Build, test, and publish successful!'
+         echo 'Build, test, and publish successful!'
       }
-   
+      failure {
+         echo 'Build failed. Please check the logs and errors.'
+      }
    }
-
-
 }
