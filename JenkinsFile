@@ -5,7 +5,7 @@ pipeline {
       DOTNET_CLI_HOME = "D:\\JENKINS_TEST_APP" 
       REMOTE_SERVER = "192.168.1.212" 
       REMOTE_PATH = "D:\\iis\\samplesit"
-      LOCAL_PUBLISH_PATH = ".\\publish"
+      LOCAL_PUBLISH_PATH = "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\JENKINS_IIS_PUBLISH\\publish"
    }
 
    stages {
@@ -35,7 +35,7 @@ pipeline {
       stage('Publish') {
          steps {
             script {
-               bat "dotnet publish --no-restore --configuration Release --output ${env.LOCAL_PUBLISH_PATH}"
+               bat "dotnet publish WebApplication1/WebApplication1.csproj --no-restore --configuration Release --output ${env.LOCAL_PUBLISH_PATH}"
             }
          }
       }
@@ -45,7 +45,7 @@ pipeline {
             script {
                powershell '''
                $sourcePath = "${env.LOCAL_PUBLISH_PATH}"
-               $destinationPath = "\\\\${env.REMOTE_SERVER}\\D$\\iis\\samplesit"  # Ensure share permissions
+               $destinationPath = "\\\\${env.REMOTE_SERVER}\\D$\\iis\\samplesit"
 
                Write-Host "Source Path: $sourcePath"
                Write-Host "Destination Path: $destinationPath"
