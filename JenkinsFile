@@ -3,7 +3,7 @@ pipeline
    agent any 
 
    environment {
-      DOTNET_CLI_HOME = "D:\JENKINS_TEST_APP"
+      DOTNET_CLI_HOME = "D:\\JENKINS_TEST_APP"
    }
 
    stages{
