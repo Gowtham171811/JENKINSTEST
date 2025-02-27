@@ -47,6 +47,9 @@ pipeline {
                $sourcePath = "${env.LOCAL_PUBLISH_PATH}"
                $destinationPath = "\\\\${env.REMOTE_SERVER}\\D$\\iis\\samplesit"  # Ensure share permissions
 
+               Write-Host "Source Path: $sourcePath"
+               Write-Host "Destination Path: $destinationPath"
+
                if (!(Test-Path $sourcePath)) {
                    throw "Source path not found: $sourcePath"
                }
